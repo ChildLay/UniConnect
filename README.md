@@ -42,6 +42,12 @@ npm run build
 npm run preview
 ```
 
+## Open and run in Visual Studio
+
+Install the **Node.js development** workload in Visual Studio 2022, then open `UniConnect.ReactWeb.sln`. Restore frontend packages once from the project directory with `npm ci`. Select `UniConnect.ReactWeb` as the startup project and press **F5** (or **Ctrl+F5**) to run Vite at `http://localhost:5173`. The project file maps Visual Studio's start action to `npm run dev` and its build action to `npm run build`.
+
+If Visual Studio reports that the JavaScript project system is unavailable, use Visual Studio Installer → Modify and install the Node.js development workload, then reopen the solution.
+
 ## Structure
 
 - `src/App.tsx` owns the shell, responsive navigation, protected route tree and admin gate.
