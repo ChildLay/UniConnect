@@ -1,0 +1,15 @@
+import {Link} from 'react-router-dom'
+import {AlertCircle,ArrowRight,CheckCircle2,LoaderCircle,X} from 'lucide-react'
+import React,{useEffect,useState} from 'react'
+import {api} from './api'
+import {safePhotoUrl} from './image-utils'
+const privateImageRequests=new Map<string,Promise<Blob>>()
+function loadPrivateImage(url:string){let request=privateImageRequests.get(url);if(!request){request=api.get<Blob>(url.replace(/^\/api\/v1/,''),{responseType:'blob'}).then(r=>r.data).finally(()=>privateImageRequests.delete(url));privateImageRequests.set(url,request)}return request}
+export function Heading({eyebrow,title,description,action}:{eyebrow:string;title:string;description:string;action?:React.ReactNode}){return <div className="page-heading"><div><div className="eyebrow">{eyebrow}</div><h1>{title}</h1><p>{description}</p></div>{action}</div>}
+export function Loading(){return <div className="loading-card"><LoaderCircle className="spin"/> Loading your community…</div>}
+export function Notice({text,retry}:{text:string;retry?:()=>void}){return <div className="notice">{text}{retry&&<button onClick={retry}>Try again</button>}</div>}
+export function ToastMessage({message,tone,onClose}:{message:string;tone:'success'|'error';onClose:()=>void}){return <div className={`event-toast ${tone}`} role={tone==='error'?'alert':'status'} aria-live={tone==='error'?'assertive':'polite'}><span className="event-toast-icon">{tone==='success'?<CheckCircle2 size={19}/>:<AlertCircle size={19}/>}</span><span>{message}</span><button type="button" aria-label="Dismiss message" onClick={onClose}><X size={17}/></button></div>}
+export function Empty({icon='✳',title,text,action}:{icon?:string;title:string;text:string;action?:React.ReactNode}){return <div className="empty-card"><span className="empty-icon">{icon}</span><h3>{title}</h3><p>{text}</p>{action}</div>}
+export function PhotoImage({src,alt='',className=''}:{src?:string|null;alt?:string;className?:string}){const safe=safePhotoUrl(src),[privateImage,setPrivateImage]=useState<{url:string;objectUrl:string}>();useEffect(()=>{if(!safe?.startsWith('/api/v1/'))return;let active=true,objectUrl:string|undefined;loadPrivateImage(safe).then(blob=>{if(!active)return;objectUrl=URL.createObjectURL(blob);setPrivateImage({url:safe,objectUrl})}).catch(()=>{});return()=>{active=false;if(objectUrl)URL.revokeObjectURL(objectUrl)}},[safe]);const imageSrc=safe?.startsWith('/api/v1/')?(privateImage?.url===safe?privateImage.objectUrl:undefined):safe;return imageSrc?<img className={className} src={imageSrc} alt={alt} onError={e=>{e.currentTarget.style.visibility='hidden'}}/>:null}
+export function Avatar({name='UniConnect',className='',imageUrl}:{name?:string;className?:string;imageUrl?:string}){return <span className={`avatar ${className}`}><PhotoImage className="avatar-photo" src={imageUrl}/>{name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()}</span>}
+export function TextLink({to,children}:{to:string;children:React.ReactNode}){return <Link className="text-link" to={to}>{children} <ArrowRight size={14}/></Link>}
