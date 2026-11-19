@@ -1,4 +1,4 @@
-# UniConnect Hub React Web
+# UniConnect React Web
 
 Version 1 browser client for the UniConnect Hub ASP.NET Core API.
 
@@ -78,5 +78,3 @@ At wide screens the interface has a left sidebar, central content and contextual
 ## Known API-driven limitations
 
 The current backend has no comment-list route, community post/event/member-profile routes, event venue/link/audience fields, post author/community display fields, notification unread-count endpoint, invitation management or connection-request listing by blocked-user details. The frontend does not synthesize those values. See the architecture note for the full list.
-
-
